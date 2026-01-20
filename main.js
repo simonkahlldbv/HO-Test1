@@ -37,7 +37,7 @@ function setupSingleView() {
         0.1,
         1000
     );
-    camera.position.set(5, 5, 5);
+    camera.position.set(DEFAULT_CAMERA_POSITION.x, DEFAULT_CAMERA_POSITION.y, DEFAULT_CAMERA_POSITION.z);
     
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -47,6 +47,9 @@ function setupSingleView() {
     controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
+    controls.target.set(DEFAULT_CAMERA_TARGET.x, DEFAULT_CAMERA_TARGET.y, DEFAULT_CAMERA_TARGET.z);
+    controls.maxDistance = 50;
+    controls.minDistance = 2;
     
     // Beleuchtung
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
@@ -78,7 +81,7 @@ function setupCompareView() {
         0.1,
         1000
     );
-    leftCamera.position.set(5, 5, 5);
+    leftCamera.position.set(DEFAULT_CAMERA_POSITION.x, DEFAULT_CAMERA_POSITION.y, DEFAULT_CAMERA_POSITION.z);
     
     leftRenderer = new THREE.WebGLRenderer({ antialias: true });
     leftRenderer.setSize(leftView.clientWidth, leftView.clientHeight);
@@ -88,6 +91,9 @@ function setupCompareView() {
     leftControls = new THREE.OrbitControls(leftCamera, leftRenderer.domElement);
     leftControls.enableDamping = true;
     leftControls.dampingFactor = 0.05;
+    leftControls.target.set(DEFAULT_CAMERA_TARGET.x, DEFAULT_CAMERA_TARGET.y, DEFAULT_CAMERA_TARGET.z);
+    leftControls.maxDistance = 50;
+    leftControls.minDistance = 2;
     
     // Rechte Szene
     rightScene = new THREE.Scene();
@@ -99,7 +105,7 @@ function setupCompareView() {
         0.1,
         1000
     );
-    rightCamera.position.set(5, 5, 5);
+    rightCamera.position.set(DEFAULT_CAMERA_POSITION.x, DEFAULT_CAMERA_POSITION.y, DEFAULT_CAMERA_POSITION.z);
     
     rightRenderer = new THREE.WebGLRenderer({ antialias: true });
     rightRenderer.setSize(rightView.clientWidth, rightView.clientHeight);
@@ -109,6 +115,9 @@ function setupCompareView() {
     rightControls = new THREE.OrbitControls(rightCamera, rightRenderer.domElement);
     rightControls.enableDamping = true;
     rightControls.dampingFactor = 0.05;
+    rightControls.target.set(DEFAULT_CAMERA_TARGET.x, DEFAULT_CAMERA_TARGET.y, DEFAULT_CAMERA_TARGET.z);
+    rightControls.maxDistance = 50;
+    rightControls.minDistance = 2;
     
     // Beleuchtung für beide Szenen
     addLightsToScene(leftScene);
@@ -228,6 +237,9 @@ function setupEventListeners() {
     // Zurück Button
     document.getElementById('backBtn').addEventListener('click', exitCompareMode);
     
+    // Reset Button im Vergleichsmodus
+    document.getElementById('resetBtn').addEventListener('click', resetCompareView);
+    
     // Vergleichsmodus Jahr-Auswahl
     const compareButtons = document.querySelectorAll('.year-selector-compare .year-btn');
     compareButtons.forEach(btn => {
@@ -319,6 +331,21 @@ function exitCompareMode() {
     document.getElementById('compareMode').classList.remove('active');
     document.getElementById('yearSelector').style.display = 'block';
     document.getElementById('compareBtn').style.display = 'block';
+}
+
+// Ansicht zurücksetzen im Vergleichsmodus
+function resetCompareView() {
+    if (leftCamera && leftControls) {
+        leftCamera.position.set(DEFAULT_CAMERA_POSITION.x, DEFAULT_CAMERA_POSITION.y, DEFAULT_CAMERA_POSITION.z);
+        leftControls.target.set(DEFAULT_CAMERA_TARGET.x, DEFAULT_CAMERA_TARGET.y, DEFAULT_CAMERA_TARGET.z);
+        leftControls.update();
+    }
+    
+    if (rightCamera && rightControls) {
+        rightCamera.position.set(DEFAULT_CAMERA_POSITION.x, DEFAULT_CAMERA_POSITION.y, DEFAULT_CAMERA_POSITION.z);
+        rightControls.target.set(DEFAULT_CAMERA_TARGET.x, DEFAULT_CAMERA_TARGET.y, DEFAULT_CAMERA_TARGET.z);
+        rightControls.update();
+    }
 }
 
 // Animation
