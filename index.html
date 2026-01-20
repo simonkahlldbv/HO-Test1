@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historischer 3D-Modell-Viewer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        #container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        #canvas-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        .year-selector {
+            position: absolute;
+            right: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            z-index: 100;
+        }
+
+        .year-selector h3 {
+            margin-bottom: 15px;
+            color: #333;
+            font-size: 18px;
+            text-align: center;
+        }
+
+        .year-btn {
+            display: block;
+            width: 120px;
+            padding: 12px;
+            margin: 8px 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .year-btn:hover {
+            transform: translateX(-5px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .year-btn.active {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            transform: scale(1.05);
+        }
+
+        .compare-btn {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 40px;
+            background: rgba(255, 255, 255, 0.95);
+            color: #667eea;
+            border: 3px solid #667eea;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .compare-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateX(-50%) scale(1.05);
+        }
+
+        .compare-mode {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 50;
+        }
+
+        .compare-mode.active {
+            display: block;
+        }
+
+        .split-container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .split-view {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .split-view canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .view-label {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 10px 30px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 24px;
+            color: #667eea;
+            z-index: 10;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .year-selector-compare {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            z-index: 10;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .year-selector-compare .year-btn {
+            width: 80px;
+            margin: 0;
+            padding: 8px;
+            font-size: 14px;
+        }
+
+        .slider-container {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 60px;
+            transform: translateX(-50%);
+            z-index: 20;
+            cursor: ew-resize;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slider-line {
+            width: 4px;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .slider-handle {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #667eea;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            padding: 12px 30px;
+            background: rgba(255, 255, 255, 0.95);
+            color: #667eea;
+            border: 2px solid #667eea;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .reset-btn {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            padding: 12px 30px;
+            background: rgba(255, 255, 255, 0.95);
+            color: #f5576c;
+            border: 2px solid #f5576c;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .reset-btn:hover {
+            background: #f5576c;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+            color: white;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 30px 50px;
+            border-radius: 15px;
+            z-index: 200;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="canvas-container"></div>
+        
+        <div class="year-selector" id="yearSelector">
+            <h3>Wähle ein Jahr</h3>
+            <button class="year-btn active" data-year="1150">1150</button>
+            <button class="year-btn" data-year="1175">1175</button>
+            <button class="year-btn" data-year="1374">1374</button>
+            <button class="year-btn" data-year="1550">1550</button>
+            <button class="year-btn" data-year="1630">1630</button>
+            <button class="year-btn" data-year="1936">1936</button>
+        </div>
+
+        <button class="compare-btn" id="compareBtn">Vergleichen</button>
+
+        <div class="compare-mode" id="compareMode">
+            <button class="back-btn" id="backBtn">← Zurück</button>
+            
+            <div class="split-container">
+                <div class="split-view" id="leftView">
+                    <div class="view-label" id="leftLabel">1150</div>
+                    <div class="year-selector-compare">
+                        <button class="year-btn active" data-side="left" data-year="1150">1150</button>
+                        <button class="year-btn" data-side="left" data-year="1175">1175</button>
+                        <button class="year-btn" data-side="left" data-year="1374">1374</button>
+                        <button class="year-btn" data-side="left" data-year="1550">1550</button>
+                        <button class="year-btn" data-side="left" data-year="1630">1630</button>
+                        <button class="year-btn" data-side="left" data-year="1936">1936</button>
+                    </div>
+                </div>
+
+                <div class="slider-container" id="sliderContainer">
+                    <div class="slider-line"></div>
+                    <div class="slider-handle">⟷</div>
+                </div>
+
+                <div class="split-view" id="rightView">
+                    <div class="view-label" id="rightLabel">1936</div>
+                    <div class="year-selector-compare">
+                        <button class="year-btn" data-side="right" data-year="1150">1150</button>
+                        <button class="year-btn" data-side="right" data-year="1175">1175</button>
+                        <button class="year-btn" data-side="right" data-year="1374">1374</button>
+                        <button class="year-btn" data-side="right" data-year="1550">1550</button>
+                        <button class="year-btn" data-side="right" data-year="1630">1630</button>
+                        <button class="year-btn active" data-side="right" data-year="1936">1936</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="loading" id="loading">Lade Modell...</div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
