@@ -8,8 +8,8 @@ let rightModel = null;
 let isCompareMode = false;
 let syncingCameras = false;
 
-// Kamera-Startpositionen (weiter raus und von oben)
-const DEFAULT_CAMERA_POSITION = { x: 10, y: 12, z: 10 };
+// Kamera-Startpositionen (viel weiter weg für Vogelperspektive)
+const DEFAULT_CAMERA_POSITION = { x: 25, y: 30, z: 25 };
 const DEFAULT_CAMERA_TARGET = { x: 0, y: 0, z: 0 };
 
 const years = ['1150', '1175', '1374', '1550', '1630', '1936'];
