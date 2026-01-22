@@ -8,8 +8,8 @@ let rightModel = null;
 let isCompareMode = false;
 let syncingCameras = false;
 
-// Kamera-Startpositionen (sehr hoch für komplette Übersicht des gesamten GLB)
-const DEFAULT_CAMERA_POSITION = { x: 0, y: 500, z: 0.1 };
+// Kamera-Startpositionen (schräg von oben für beste Übersicht)
+const DEFAULT_CAMERA_POSITION = { x: 400, y: 700, z: 400 };
 const DEFAULT_CAMERA_TARGET = { x: 0, y: 0, z: 0 };
 
 const years = ['1150', '1175', '1374', '1550', '1630', '1936'];
@@ -48,8 +48,8 @@ function setupSingleView() {
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
     controls.target.set(DEFAULT_CAMERA_TARGET.x, DEFAULT_CAMERA_TARGET.y, DEFAULT_CAMERA_TARGET.z);
-    controls.maxDistance = 1000;
-    controls.minDistance = 50;
+    controls.maxDistance = 1500;
+    controls.minDistance = 100;
     
     // Beleuchtung
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
@@ -92,8 +92,8 @@ function setupCompareView() {
     leftControls.enableDamping = true;
     leftControls.dampingFactor = 0.05;
     leftControls.target.set(DEFAULT_CAMERA_TARGET.x, DEFAULT_CAMERA_TARGET.y, DEFAULT_CAMERA_TARGET.z);
-    leftControls.maxDistance = 1000;
-    leftControls.minDistance = 50;
+    leftControls.maxDistance = 1500;
+    leftControls.minDistance = 100;
     
     // Rechte Szene
     rightScene = new THREE.Scene();
@@ -116,8 +116,8 @@ function setupCompareView() {
     rightControls.enableDamping = true;
     rightControls.dampingFactor = 0.05;
     rightControls.target.set(DEFAULT_CAMERA_TARGET.x, DEFAULT_CAMERA_TARGET.y, DEFAULT_CAMERA_TARGET.z);
-    rightControls.maxDistance = 1000;
-    rightControls.minDistance = 50;
+    rightControls.maxDistance = 1500;
+    rightControls.minDistance = 100;
     
     // Beleuchtung für beide Szenen
     addLightsToScene(leftScene);
