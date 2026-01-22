@@ -8,8 +8,8 @@ let rightModel = null;
 let isCompareMode = false;
 let syncingCameras = false;
 
-// Kamera-Startpositionen (viel weiter weg für Vogelperspektive)
-const DEFAULT_CAMERA_POSITION = { x: 25, y: 30, z: 25 };
+// Kamera-Startpositionen (sehr weit weg für komplette Übersicht)
+const DEFAULT_CAMERA_POSITION = { x: 50, y: 60, z: 50 };
 const DEFAULT_CAMERA_TARGET = { x: 0, y: 0, z: 0 };
 
 const years = ['1150', '1175', '1374', '1550', '1630', '1936'];
@@ -48,8 +48,8 @@ function setupSingleView() {
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
     controls.target.set(DEFAULT_CAMERA_TARGET.x, DEFAULT_CAMERA_TARGET.y, DEFAULT_CAMERA_TARGET.z);
-    controls.maxDistance = 50;
-    controls.minDistance = 2;
+    controls.maxDistance = 200;
+    controls.minDistance = 10;
     
     // Beleuchtung
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
@@ -92,8 +92,8 @@ function setupCompareView() {
     leftControls.enableDamping = true;
     leftControls.dampingFactor = 0.05;
     leftControls.target.set(DEFAULT_CAMERA_TARGET.x, DEFAULT_CAMERA_TARGET.y, DEFAULT_CAMERA_TARGET.z);
-    leftControls.maxDistance = 50;
-    leftControls.minDistance = 2;
+    leftControls.maxDistance = 200;
+    leftControls.minDistance = 10;
     
     // Rechte Szene
     rightScene = new THREE.Scene();
@@ -116,8 +116,8 @@ function setupCompareView() {
     rightControls.enableDamping = true;
     rightControls.dampingFactor = 0.05;
     rightControls.target.set(DEFAULT_CAMERA_TARGET.x, DEFAULT_CAMERA_TARGET.y, DEFAULT_CAMERA_TARGET.z);
-    rightControls.maxDistance = 50;
-    rightControls.minDistance = 2;
+    rightControls.maxDistance = 200;
+    rightControls.minDistance = 10;
     
     // Beleuchtung für beide Szenen
     addLightsToScene(leftScene);
@@ -261,56 +261,13 @@ function setupEventListeners() {
     });
     
     // Slider
-    setupSlider();
+    // Slider-Funktion entfernt - feste 50/50 Aufteilung
     
     // Fenster-Resize
     window.addEventListener('resize', onWindowResize);
 }
 
-function setupSlider() {
-    const sliderContainer = document.getElementById('sliderContainer');
-    const splitContainer = document.querySelector('.split-container');
-    const leftView = document.getElementById('leftView');
-    const rightView = document.getElementById('rightView');
-    
-    let isDragging = false;
-    
-    sliderContainer.addEventListener('mousedown', () => {
-        isDragging = true;
-    });
-    
-    document.addEventListener('mouseup', () => {
-        isDragging = false;
-    });
-    
-    document.addEventListener('mousemove', (e) => {
-        if (!isDragging || !isCompareMode) return;
-        
-        const rect = splitContainer.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const percentage = (x / rect.width) * 100;
-        
-        if (percentage > 10 && percentage < 90) {
-            leftView.style.flex = `0 0 ${percentage}%`;
-            rightView.style.flex = `0 0 ${100 - percentage}%`;
-            
-            if (leftRenderer && rightRenderer) {
-                const leftWidth = leftView.clientWidth;
-                const rightWidth = rightView.clientWidth;
-                
-                leftRenderer.setSize(leftWidth, leftView.clientHeight);
-                leftCamera.aspect = leftWidth / leftView.clientHeight;
-                leftCamera.updateProjectionMatrix();
-                
-                rightRenderer.setSize(rightWidth, rightView.clientHeight);
-                rightCamera.aspect = rightWidth / rightView.clientHeight;
-                rightCamera.updateProjectionMatrix();
-            }
-        }
-    });
-}
-
-// Vergleichsmodus
+// Animation
 function enterCompareMode() {
     isCompareMode = true;
     document.getElementById('compareMode').classList.add('active');
