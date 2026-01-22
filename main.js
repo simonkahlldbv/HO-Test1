@@ -1,4 +1,3 @@
-
 // Globale Variablen
 let scene, camera, renderer, controls;
 let leftScene, leftCamera, leftRenderer, leftControls;
@@ -10,7 +9,7 @@ let isCompareMode = false;
 let syncingCameras = false;
 
 // Kamera-Startpositionen (sehr weit weg für komplette Übersicht)
-const DEFAULT_CAMERA_POSITION = { x: 50, y: 60, z: 50 };
+const DEFAULT_CAMERA_POSITION = { x: 0, y: 150, z: 0.1 };
 const DEFAULT_CAMERA_TARGET = { x: 0, y: 0, z: 0 };
 
 const years = ['1150', '1175', '1374', '1550', '1630', '1936'];
@@ -33,7 +32,7 @@ function setupSingleView() {
     scene.background = new THREE.Color(0x1a1a2e);
     
     camera = new THREE.PerspectiveCamera(
-        75,
+        60,
         window.innerWidth / window.innerHeight,
         0.1,
         5000
@@ -77,7 +76,7 @@ function setupCompareView() {
     leftScene.background = new THREE.Color(0x1a1a2e);
     
     leftCamera = new THREE.PerspectiveCamera(
-        75,
+        60,
         leftView.clientWidth / leftView.clientHeight,
         0.1,
         5000
@@ -101,7 +100,7 @@ function setupCompareView() {
     rightScene.background = new THREE.Color(0x1a1a2e);
     
     rightCamera = new THREE.PerspectiveCamera(
-        75,
+        60,
         rightView.clientWidth / rightView.clientHeight,
         0.1,
         5000
@@ -198,52 +197,23 @@ function loadModel(year, targetScene = null) {
 function displayModel(year, targetScene = null) {
     const model = models[year].clone();
     
-    // Modell zentrieren und Größe berechnen
+    // Modell zentrieren
     const box = new THREE.Box3().setFromObject(model);
     const center = box.getCenter(new THREE.Vector3());
-    const size = box.getSize(new THREE.Vector3());
-    
-    // Modell zum Zentrum verschieben
     model.position.sub(center);
-    
-    // Berechne optimale Kamera-Distanz basierend auf Modell-Größe
-    const maxDim = Math.max(size.x, size.y, size.z);
-    const optimalDistance = maxDim * 2.5;
-    
-    // Setze Kamera-Position basierend auf Modell-Größe
-    const cameraPos = {
-        x: optimalDistance * 0.7,
-        y: optimalDistance * 0.9,
-        z: optimalDistance * 0.7
-    };
     
     if (targetScene === 'left') {
         if (leftModel) leftScene.remove(leftModel);
         leftModel = model;
         leftScene.add(leftModel);
-        
-        // Kamera anpassen
-        leftCamera.position.set(cameraPos.x, cameraPos.y, cameraPos.z);
-        leftControls.target.set(0, 0, 0);
-        leftControls.update();
     } else if (targetScene === 'right') {
         if (rightModel) rightScene.remove(rightModel);
         rightModel = model;
         rightScene.add(rightModel);
-        
-        // Kamera anpassen
-        rightCamera.position.set(cameraPos.x, cameraPos.y, cameraPos.z);
-        rightControls.target.set(0, 0, 0);
-        rightControls.update();
     } else {
         if (currentModel) scene.remove(currentModel);
         currentModel = model;
         scene.add(currentModel);
-        
-        // Kamera anpassen
-        camera.position.set(cameraPos.x, cameraPos.y, cameraPos.z);
-        controls.target.set(0, 0, 0);
-        controls.update();
     }
     
     showLoading(false);
