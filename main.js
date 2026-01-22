@@ -8,8 +8,8 @@ let rightModel = null;
 let isCompareMode = false;
 let syncingCameras = false;
 
-// Kamera-Startpositionen (sehr weit weg für komplette Übersicht)
-const DEFAULT_CAMERA_POSITION = { x: 0, y: 150, z: 0.1 };
+// Kamera-Startpositionen (sehr hoch für komplette Übersicht des gesamten GLB)
+const DEFAULT_CAMERA_POSITION = { x: 0, y: 500, z: 0.1 };
 const DEFAULT_CAMERA_TARGET = { x: 0, y: 0, z: 0 };
 
 const years = ['1150', '1175', '1374', '1550', '1630', '1936'];
@@ -32,10 +32,10 @@ function setupSingleView() {
     scene.background = new THREE.Color(0x1a1a2e);
     
     camera = new THREE.PerspectiveCamera(
-        60,
+        80,
         window.innerWidth / window.innerHeight,
         0.1,
-        5000
+        10000
     );
     camera.position.set(DEFAULT_CAMERA_POSITION.x, DEFAULT_CAMERA_POSITION.y, DEFAULT_CAMERA_POSITION.z);
     
@@ -48,8 +48,8 @@ function setupSingleView() {
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
     controls.target.set(DEFAULT_CAMERA_TARGET.x, DEFAULT_CAMERA_TARGET.y, DEFAULT_CAMERA_TARGET.z);
-    controls.maxDistance = 200;
-    controls.minDistance = 10;
+    controls.maxDistance = 1000;
+    controls.minDistance = 50;
     
     // Beleuchtung
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
@@ -76,10 +76,10 @@ function setupCompareView() {
     leftScene.background = new THREE.Color(0x1a1a2e);
     
     leftCamera = new THREE.PerspectiveCamera(
-        60,
+        80,
         leftView.clientWidth / leftView.clientHeight,
         0.1,
-        5000
+        10000
     );
     leftCamera.position.set(DEFAULT_CAMERA_POSITION.x, DEFAULT_CAMERA_POSITION.y, DEFAULT_CAMERA_POSITION.z);
     
@@ -92,18 +92,18 @@ function setupCompareView() {
     leftControls.enableDamping = true;
     leftControls.dampingFactor = 0.05;
     leftControls.target.set(DEFAULT_CAMERA_TARGET.x, DEFAULT_CAMERA_TARGET.y, DEFAULT_CAMERA_TARGET.z);
-    leftControls.maxDistance = 200;
-    leftControls.minDistance = 10;
+    leftControls.maxDistance = 1000;
+    leftControls.minDistance = 50;
     
     // Rechte Szene
     rightScene = new THREE.Scene();
     rightScene.background = new THREE.Color(0x1a1a2e);
     
     rightCamera = new THREE.PerspectiveCamera(
-        60,
+        80,
         rightView.clientWidth / rightView.clientHeight,
         0.1,
-        5000
+        10000
     );
     rightCamera.position.set(DEFAULT_CAMERA_POSITION.x, DEFAULT_CAMERA_POSITION.y, DEFAULT_CAMERA_POSITION.z);
     
@@ -116,8 +116,8 @@ function setupCompareView() {
     rightControls.enableDamping = true;
     rightControls.dampingFactor = 0.05;
     rightControls.target.set(DEFAULT_CAMERA_TARGET.x, DEFAULT_CAMERA_TARGET.y, DEFAULT_CAMERA_TARGET.z);
-    rightControls.maxDistance = 200;
-    rightControls.minDistance = 10;
+    rightControls.maxDistance = 1000;
+    rightControls.minDistance = 50;
     
     // Beleuchtung für beide Szenen
     addLightsToScene(leftScene);
