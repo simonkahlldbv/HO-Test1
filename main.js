@@ -1,3 +1,4 @@
+
 // Globale Variablen
 let scene, camera, renderer, controls;
 let leftScene, leftCamera, leftRenderer, leftControls;
@@ -35,7 +36,7 @@ function setupSingleView() {
         75,
         window.innerWidth / window.innerHeight,
         0.1,
-        1000
+        5000
     );
     camera.position.set(DEFAULT_CAMERA_POSITION.x, DEFAULT_CAMERA_POSITION.y, DEFAULT_CAMERA_POSITION.z);
     
@@ -79,7 +80,7 @@ function setupCompareView() {
         75,
         leftView.clientWidth / leftView.clientHeight,
         0.1,
-        1000
+        5000
     );
     leftCamera.position.set(DEFAULT_CAMERA_POSITION.x, DEFAULT_CAMERA_POSITION.y, DEFAULT_CAMERA_POSITION.z);
     
@@ -103,7 +104,7 @@ function setupCompareView() {
         75,
         rightView.clientWidth / rightView.clientHeight,
         0.1,
-        1000
+        5000
     );
     rightCamera.position.set(DEFAULT_CAMERA_POSITION.x, DEFAULT_CAMERA_POSITION.y, DEFAULT_CAMERA_POSITION.z);
     
@@ -197,23 +198,52 @@ function loadModel(year, targetScene = null) {
 function displayModel(year, targetScene = null) {
     const model = models[year].clone();
     
-    // Modell zentrieren
+    // Modell zentrieren und Größe berechnen
     const box = new THREE.Box3().setFromObject(model);
     const center = box.getCenter(new THREE.Vector3());
+    const size = box.getSize(new THREE.Vector3());
+    
+    // Modell zum Zentrum verschieben
     model.position.sub(center);
+    
+    // Berechne optimale Kamera-Distanz basierend auf Modell-Größe
+    const maxDim = Math.max(size.x, size.y, size.z);
+    const optimalDistance = maxDim * 2.5;
+    
+    // Setze Kamera-Position basierend auf Modell-Größe
+    const cameraPos = {
+        x: optimalDistance * 0.7,
+        y: optimalDistance * 0.9,
+        z: optimalDistance * 0.7
+    };
     
     if (targetScene === 'left') {
         if (leftModel) leftScene.remove(leftModel);
         leftModel = model;
         leftScene.add(leftModel);
+        
+        // Kamera anpassen
+        leftCamera.position.set(cameraPos.x, cameraPos.y, cameraPos.z);
+        leftControls.target.set(0, 0, 0);
+        leftControls.update();
     } else if (targetScene === 'right') {
         if (rightModel) rightScene.remove(rightModel);
         rightModel = model;
         rightScene.add(rightModel);
+        
+        // Kamera anpassen
+        rightCamera.position.set(cameraPos.x, cameraPos.y, cameraPos.z);
+        rightControls.target.set(0, 0, 0);
+        rightControls.update();
     } else {
         if (currentModel) scene.remove(currentModel);
         currentModel = model;
         scene.add(currentModel);
+        
+        // Kamera anpassen
+        camera.position.set(cameraPos.x, cameraPos.y, cameraPos.z);
+        controls.target.set(0, 0, 0);
+        controls.update();
     }
     
     showLoading(false);
