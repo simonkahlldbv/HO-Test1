@@ -8,8 +8,8 @@ let rightModel = null;
 let isCompareMode = false;
 let syncingCameras = false;
 
-// Kamera-Startpositionen (schräg von oben für beste Übersicht)
-const DEFAULT_CAMERA_POSITION = { x: 400, y: 700, z: 400 };
+// Kamera-Startpositionen (noch höher und weiter weg für beste Übersicht)
+const DEFAULT_CAMERA_POSITION = { x: 600, y: 1000, z: 600 };
 const DEFAULT_CAMERA_TARGET = { x: 0, y: 0, z: 0 };
 
 const years = ['1150', '1175', '1374', '1550', '1630', '1936'];
@@ -29,7 +29,7 @@ function setupSingleView() {
     const container = document.getElementById('canvas-container');
     
     scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x1a1a2e);
+    scene.background = new THREE.Color(0xf5f5f5);
     
     camera = new THREE.PerspectiveCamera(
         80,
@@ -48,7 +48,7 @@ function setupSingleView() {
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
     controls.target.set(DEFAULT_CAMERA_TARGET.x, DEFAULT_CAMERA_TARGET.y, DEFAULT_CAMERA_TARGET.z);
-    controls.maxDistance = 1500;
+    controls.maxDistance = 2000;
     controls.minDistance = 100;
     
     // Beleuchtung
@@ -73,7 +73,7 @@ function setupCompareView() {
     
     // Linke Szene
     leftScene = new THREE.Scene();
-    leftScene.background = new THREE.Color(0x1a1a2e);
+    leftScene.background = new THREE.Color(0xf5f5f5);
     
     leftCamera = new THREE.PerspectiveCamera(
         80,
@@ -92,12 +92,12 @@ function setupCompareView() {
     leftControls.enableDamping = true;
     leftControls.dampingFactor = 0.05;
     leftControls.target.set(DEFAULT_CAMERA_TARGET.x, DEFAULT_CAMERA_TARGET.y, DEFAULT_CAMERA_TARGET.z);
-    leftControls.maxDistance = 1500;
+    leftControls.maxDistance = 2000;
     leftControls.minDistance = 100;
     
     // Rechte Szene
     rightScene = new THREE.Scene();
-    rightScene.background = new THREE.Color(0x1a1a2e);
+    rightScene.background = new THREE.Color(0xf5f5f5);
     
     rightCamera = new THREE.PerspectiveCamera(
         80,
@@ -116,7 +116,7 @@ function setupCompareView() {
     rightControls.enableDamping = true;
     rightControls.dampingFactor = 0.05;
     rightControls.target.set(DEFAULT_CAMERA_TARGET.x, DEFAULT_CAMERA_TARGET.y, DEFAULT_CAMERA_TARGET.z);
-    rightControls.maxDistance = 1500;
+    rightControls.maxDistance = 2000;
     rightControls.minDistance = 100;
     
     // Beleuchtung für beide Szenen
