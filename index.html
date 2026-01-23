@@ -187,41 +187,16 @@
             font-size: 14px;
         }
 
-        .slider-container {
+        .split-divider {
             position: absolute;
             left: 50%;
             top: 0;
             bottom: 0;
-            width: 60px;
+            width: 2px;
+            background: white;
             transform: translateX(-50%);
             z-index: 20;
-            cursor: ew-resize;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .slider-line {
-            width: 4px;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.9);
-            box-shadow: 0 0 20px rgba(90, 143, 216, 0.6);
-        }
-
-        .slider-handle {
-            position: absolute;
-            width: 60px;
-            height: 60px;
-            background: #5a8fd8;
-            border: 3px solid white;
-            border-radius: 50%;
-            box-shadow: 0 4px 20px rgba(42, 82, 152, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            color: white;
-            font-weight: bold;
+            pointer-events: none;
         }
 
         .back-btn {
@@ -316,10 +291,7 @@
                     </div>
                 </div>
 
-                <div class="slider-container" id="sliderContainer">
-                    <div class="slider-line"></div>
-                    <div class="slider-handle">⟷</div>
-                </div>
+                <div class="split-divider"></div>
 
                 <div class="split-view" id="rightView">
                     <div class="view-label" id="rightLabel">1936</div>
