@@ -8,8 +8,8 @@ let rightModel = null;
 let isCompareMode = false;
 let syncingCameras = false;
 
-// Kamera-Startpositionen (flachere Perspektive von hinten)
-const DEFAULT_CAMERA_POSITION = { x: 0, y: 800, z: 1400 };
+// Kamera-Startpositionen (weiter weg und flacher)
+const DEFAULT_CAMERA_POSITION = { x: 0, y: 600, z: 1800 };
 const DEFAULT_CAMERA_TARGET = { x: 0, y: 0, z: 0 };
 
 const years = ['1150', '1175', '1374', '1550', '1630', '1936'];
@@ -356,4 +356,4 @@ function onWindowResize() {
 
 function showLoading(show) {
     document.getElementById('loading').style.display = show ? 'block' : 'none';
-}
+}y
