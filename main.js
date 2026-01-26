@@ -33,10 +33,10 @@ function setupSingleView() {
     scene.background = new THREE.Color(0xf5f5f5);
     
     camera = new THREE.PerspectiveCamera(
-        80,
+        isMobile ? 70 : 80,
         window.innerWidth / window.innerHeight,
         0.1,
-        10000
+        isMobile ? 5000 : 10000
     );
     camera.position.set(DEFAULT_CAMERA_POSITION.x, DEFAULT_CAMERA_POSITION.y, DEFAULT_CAMERA_POSITION.z);
     
@@ -56,17 +56,19 @@ function setupSingleView() {
     controls.maxDistance = 2000;
     controls.minDistance = 100;
     
-    // Beleuchtung
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+    // Beleuchtung - auf Mobile reduziert
+    const ambientLight = new THREE.AmbientLight(0xffffff, isMobile ? 0.8 : 0.6);
     scene.add(ambientLight);
     
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-    directionalLight.position.set(10, 10, 10);
-    directionalLight.castShadow = true;
-    scene.add(directionalLight);
-    
-    const hemisphereLight = new THREE.HemisphereLight(0xffffbb, 0x080820, 0.5);
-    scene.add(hemisphereLight);
+    if (!isMobile) {
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        directionalLight.position.set(10, 10, 10);
+        directionalLight.castShadow = true;
+        scene.add(directionalLight);
+        
+        const hemisphereLight = new THREE.HemisphereLight(0xffffbb, 0x080820, 0.5);
+        scene.add(hemisphereLight);
+    }
     
     animate();
 }
@@ -182,9 +184,37 @@ function syncCameras(sourceCamera, sourceControls, targetCamera, targetControls)
 
 // Modell laden
 function loadModel(year, targetScene = null) {
+    // Auf Mobile: Vergleichsmodus nicht erlauben
+    if (isMobile && targetScene) {
+        showLoading(false);
+        return;
+    }
+    
     showLoading(true);
     
-    if (models[year]) {
+    // Auf Mobile: Altes Modell sofort entfernen um RAM freizugeben
+    if (isMobile && models[year]) {
+        // Lösche alle anderen gecachten Modelle
+        for (let key in models) {
+            if (key !== year) {
+                if (models[key]) {
+                    models[key].traverse((child) => {
+                        if (child.geometry) child.geometry.dispose();
+                        if (child.material) {
+                            if (Array.isArray(child.material)) {
+                                child.material.forEach(m => m.dispose());
+                            } else {
+                                child.material.dispose();
+                            }
+                        }
+                    });
+                    delete models[key];
+                }
+            }
+        }
+    }
+    
+    if (models[year] && !isMobile) {
         displayModel(year, targetScene);
         return;
     }
@@ -261,7 +291,13 @@ function setupEventListeners() {
     });
     
     // Vergleichen Button
-    document.getElementById('compareBtn').addEventListener('click', enterCompareMode);
+    document.getElementById('compareBtn').addEventListener('click', () => {
+        if (isMobile) {
+            alert('Der Vergleichsmodus ist auf Mobilgeräten leider nicht verfügbar. Bitte nutze einen Desktop-Browser für diese Funktion.');
+            return;
+        }
+        enterCompareMode();
+    });
     
     // Zurück Button
     document.getElementById('backBtn').addEventListener('click', exitCompareMode);
